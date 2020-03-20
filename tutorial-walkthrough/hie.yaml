@@ -1,0 +1,4 @@
+cradle:
+  multi:
+    - path: './plutus-tx-tutorial'
+      config: { cradle: { cabal: { component: 'lib:plutus-tx-tutorial' } } }

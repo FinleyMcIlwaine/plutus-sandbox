@@ -1,0 +1,27 @@
+{
+    "name": "Plutus Sandbox with GHC 8.6.5 and HIE",
+    "dockerComposeFile": [
+        "../docker-compose.yml",
+        "docker-compose.override.yml"
+    ],
+    "service": "plutus",
+    "workspaceFolder": "/tutorial-walkthrough",
+    "shutdownAction": "stopCompose",
+
+    // Use 'settings' to set *default* container specific settings.json values on container create. 
+    // You can edit these settings after create using File > Preferences > Settings > Remote.
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+    },
+    
+    // Uncomment to avoid running as root
+    // "remoteUser": "vscode",
+    
+    // IDs of extensions inside container.
+    "extensions": [
+        "alanz.vscode-hie-server"
+    ],
+
+    // Used to run commands on startup -- e.g. install dependencies not in base image
+    // "postCreateCommand": "apk ..."
+}
