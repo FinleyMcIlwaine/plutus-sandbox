@@ -1,0 +1,25 @@
+packages: ./
+
+source-repository-package
+    type: git
+    location: https://github.com/input-output-hk/plutus.git
+    subdir: plutus-tx
+
+source-repository-package
+    type: git
+    location: https://github.com/input-output-hk/plutus.git
+    subdir: plutus-tx-plugin
+
+source-repository-package
+    type: git
+    location: https://github.com/input-output-hk/plutus.git
+    subdir: plutus-ir
+
+source-repository-package
+    type: git
+    location: https://github.com/input-output-hk/plutus.git
+    subdir: language-plutus-core
+
+source-repository-package
+    type: git 
+    location: https://github.com/input-output-hk/cardano-crypto
