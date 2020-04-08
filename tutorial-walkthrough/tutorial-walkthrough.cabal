@@ -17,4 +17,5 @@ library
     prettyprinter
   hs-source-dirs:
     plutus-tx-tutorial
+  ghc-options: -fobject-code -fno-ignore-interface-pragmas -fno-omit-interface-pragmas
   default-language:    Haskell2010
