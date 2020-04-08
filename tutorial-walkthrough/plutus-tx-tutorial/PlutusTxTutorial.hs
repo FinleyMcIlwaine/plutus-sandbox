@@ -5,23 +5,31 @@
 
 module PlutusTxTutorial where
 
-import Language.PlutusTx
-import Language.PlutusTx.Lift
-import Language.PlutusTx.Code
-import Language.PlutusTx.Builtins
-import Language.PlutusTx.Prelude
-import Language.PlutusCore.Universe as PLC
-import Language.PlutusCore.Evaluation.Machine.Ck
+-- Real imports for things used in code
+import           Language.PlutusTx
+import           Language.PlutusTx.Lift
+import           Language.PlutusTx.Code
+import           Language.PlutusTx.Builtins
+import           Language.PlutusTx.Prelude
+import           Language.PlutusCore.Universe as PLC
+
+-- Has the `toTerm` conversion function for `Program` types, allowing
+-- for evaluation by the CK machine
 import Language.PlutusCore.Core
+
+-- Has the `evaluateCk` function used to run PLC programs (terms)
+import Language.PlutusCore.Evaluation.Machine.Ck
+
+-- Just so we can use the `pretty` function
 import Data.Text.Prettyprint.Doc
+
 
 -- * 3.3 * Writing basic PlutusTx programs
 
 -- One of the simplest programs that we can write:
 -- Just evaluates to the integer 1
 integerOne :: CompiledCode PLC.DefaultUni Integer
-integerOne = $$(compile
-    [|| (1 :: Integer) ||])
+integerOne = $$(compile [|| (1 :: Integer) ||])
 
 -- Slightly more complex, the identity function on
 -- integers

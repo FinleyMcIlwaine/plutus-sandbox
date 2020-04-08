@@ -1,5 +1,5 @@
 {
-    "name": "Plutus Sandbox with GHC 8.6.5 and HIE",
+    "name": "Plutus Sandbox with GHC 8.8.2 and HIE",
     "dockerComposeFile": [
         "../docker-compose.yml",
         "docker-compose.override.yml"

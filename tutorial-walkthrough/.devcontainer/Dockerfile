@@ -1,11 +1,12 @@
 # Base image
 FROM plutus-base
 
-# Configure and install Cachix, and HIE
+# Comfigure and install Cachix for all-hies
 RUN nix-env -iA cachix -f https://cachix.org/api/v1/install && cachix use all-hies \
     #
-    # Install HIE for GHC 8.6.5
-    && nix-env -iA unstableFallback.selection --arg selector 'p: { inherit (p) ghc865; }' -f https://github.com/infinisil/all-hies/tarball/master
+    # Install HIE for GHC 8.8.2
+    && nix-env -iA selection --arg selector 'p: { inherit (p) ghc882; }' -f https://github.com/infinisil/all-hies/tarball/master
+
 
 # Add a non-root user with sudo access. Use the "remoteUser" property in
 # devcontainer.json to use it. On Linux, the container user's GID/UIDs
