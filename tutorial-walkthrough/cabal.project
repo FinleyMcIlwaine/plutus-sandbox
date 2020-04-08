@@ -2,24 +2,28 @@ packages: ./
 
 source-repository-package
     type: git
-    location: https://github.com/input-output-hk/plutus.git
+    location: https://github.com/FinleyMcIlwaine/plutus-prototype.git
+    branch: plutus-tx-test
     subdir: plutus-tx
 
 source-repository-package
     type: git
-    location: https://github.com/input-output-hk/plutus.git
+    location: https://github.com/FinleyMcIlwaine/plutus-prototype.git
+    branch: plutus-tx-test
     subdir: plutus-tx-plugin
 
 source-repository-package
     type: git
-    location: https://github.com/input-output-hk/plutus.git
+    location: https://github.com/FinleyMcIlwaine/plutus-prototype.git
+    branch: plutus-tx-test
     subdir: plutus-ir
 
 source-repository-package
     type: git
-    location: https://github.com/input-output-hk/plutus.git
+    location: https://github.com/FinleyMcIlwaine/plutus-prototype.git
+    branch: plutus-tx-test
     subdir: language-plutus-core
 
 source-repository-package
-    type: git 
+    type: git
     location: https://github.com/input-output-hk/cardano-crypto
