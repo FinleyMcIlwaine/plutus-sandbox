@@ -8,7 +8,6 @@ RUN nix-env -iA cachix -f https://cachix.org/api/v1/install && cachix use all-hi
     && nix-env -iA selection --arg selector 'p: { inherit (p) ghc882; }' -f https://github.com/infinisil/all-hies/tarball/master
 
 # Install doctest bc I like it
-RUN cabal v2-update
 RUN cabal install doctest
 ENV PATH="/root/.cabal/bin:${PATH}"
 
