@@ -1,12 +1,16 @@
 # Base image
 FROM plutus-base
 
-# Comfigure and install Cachix for all-hies
+# Configure and install Cachix for all-hies
 RUN nix-env -iA cachix -f https://cachix.org/api/v1/install && cachix use all-hies \
     #
     # Install HIE for GHC 8.8.2
     && nix-env -iA selection --arg selector 'p: { inherit (p) ghc882; }' -f https://github.com/infinisil/all-hies/tarball/master
 
+# Install doctest bc I like it
+RUN cabal v2-update
+RUN cabal install doctest
+ENV PATH="/root/.cabal/bin:${PATH}"
 
 # Add a non-root user with sudo access. Use the "remoteUser" property in
 # devcontainer.json to use it. On Linux, the container user's GID/UIDs

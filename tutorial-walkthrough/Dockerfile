@@ -10,3 +10,5 @@ RUN nix-channel --remove nixpkgs && nix-channel --add https://nixos.org/channels
     # Help cabal see the extra library and include directories
     && cabal user-config update -a "extra-lib-dirs: /nix/store/z9vsvmll45kjdf7j9h0vlxjjya6yxgc0-openssl-1.1.1d/lib" \
     && cabal user-config update -a "extra-include-dirs: /nix/store/2v45sw2109m2c7xzld4gc8g5bvjzybc4-openssl-1.1.1d-dev/include"
+
+RUN cabal v2-update

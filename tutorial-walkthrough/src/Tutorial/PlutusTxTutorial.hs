@@ -3,9 +3,8 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 
-module PlutusTxTutorial where
+module Tutorial.PlutusTxTutorial where
 
--- Real imports for things used in code
 import           Language.PlutusTx
 import           Language.PlutusTx.Lift
 import           Language.PlutusTx.Code
@@ -13,21 +12,32 @@ import           Language.PlutusTx.Builtins
 import           Language.PlutusTx.Prelude
 import           Language.PlutusCore.Universe as PLC
 
--- Has the `toTerm` conversion function for `Program` types, allowing
--- for evaluation by the CK machine
-import Language.PlutusCore.Core
+-- * doctest setup
 
--- Has the `evaluateCk` function used to run PLC programs (terms)
-import Language.PlutusCore.Evaluation.Machine.Ck
-
--- Just so we can use the `pretty` function
-import Data.Text.Prettyprint.Doc
-
+-- $setup
+-- >>> -- Has the getPlc functions
+-- >>> import Language.PlutusTx.Code
+-- >>> -- Has the `toTerm` conversion function for `Program` types, allowing
+-- >>> -- for evaluation by the CK machine
+-- >>> import Language.PlutusCore.Core
+-- >>> -- Has the `evaluateCk` function used to run PLC programs (terms)
+-- >>> import Language.PlutusCore.Evaluation.Machine.Ck
+-- >>> -- Just so we can use the `pretty` function
+-- >>> import Data.Text.Prettyprint.Doc
 
 -- * 3.3 * Writing basic PlutusTx programs
 
--- One of the simplest programs that we can write:
--- Just evaluates to the integer 1
+-- | One of the simplest programs that we can write:
+--   Just evaluates to the integer 1
+-- 
+-- >>> pretty $ getPlc integerOne
+-- (program 1.0.0
+--   (con 1)
+-- )
+
+foo :: Int
+foo = 42
+
 integerOne :: CompiledCode PLC.DefaultUni Integer
 integerOne = $$(compile [|| (1 :: Integer) ||])
 

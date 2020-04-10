@@ -1,4 +1,10 @@
 cradle:
   multi:
-    - path: ./plutus-tx-tutorial
-      config: { cradle: { cabal: { component: 'lib:tutorial-walkthrough' } } }
+    - path: "./test/doctest"
+      config: { cradle: { none: } }
+    - path: "./"
+      config: { cradle: { cabal: [
+        { path: "./src", component: "lib:tutorial-walkthrough" },
+        { path: "./test", component: "tutorial-tests" }
+      ] } }
+    
