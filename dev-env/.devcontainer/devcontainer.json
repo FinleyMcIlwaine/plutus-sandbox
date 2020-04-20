@@ -1,0 +1,15 @@
+{
+    "name": "Plutus Development",
+    "dockerfile": [ "./Dockerfile" ],
+    "workspaceFolder": "/contract",
+    "shutdownAction": "stopCompose",
+
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+    },
+    
+    // IDs of extensions inside container.
+    "extensions": [
+        "dramforever.vscode-ghc-simple"
+    ],
+}

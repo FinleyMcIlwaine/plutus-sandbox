@@ -1,0 +1,21 @@
+{
+    "name": "Plutus Sandbox with GHC 8.8.2 and HIE",
+    "dockerComposeFile": [
+        "../docker-compose.yml",
+        "docker-compose.override.yml"
+    ],
+    "service": "plutus",
+    "workspaceFolder": "/escrow",
+    "shutdownAction": "stopCompose",
+
+    // Use 'settings' to set *default* container specific settings.json values on container create. 
+    // You can edit these settings after create using File > Preferences > Settings > Remote.
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+    },
+    
+    // IDs of extensions inside container.
+    "extensions": [
+        "alanz.vscode-hie-server"
+    ],
+}

@@ -1,0 +1,10 @@
+cradle:
+  multi:
+    - path: "./test/doctest"
+      config: { cradle: { none: } }
+    - path: "./"
+      config: { cradle: { cabal: [
+        { path: "./src", component: "lib:contracts" },
+        { path: "./test", component: "contracts-tests" }
+      ] } }
+    
