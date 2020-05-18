@@ -1,0 +1,11 @@
+-- For `getPlc`
+:m +Language.PlutusTx.Code
+-- For `pretty`
+:m +Data.Text.Prettyprint.Doc
+-- For `toTerm`
+:m +Language.PlutusCore.Core
+-- For `evaluateCk`
+:m +Language.PlutusCore.Evaluation.Machine.Ck
+
+-- Prompt
+:set prompt "\ESC[36m* Plutus Tutorial> \ESC[m"

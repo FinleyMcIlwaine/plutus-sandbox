@@ -10,5 +10,3 @@ This directory contains the code I wrote while working through IOHK's Plutus Tut
 5. Click the remote development icon in the bottom left, and select "Open Folder in Container", and select "Open".
 
 A new, remote VSCode instance should start, with this folder opened. Haskell IDE Engine will begin building the project with Cabal once you select a `.hs` file. Once it is done building, you should be able to use the devcontainer as a full Haskell IDE.
-
-A tutorial walkthrough will be written up here in the future.
