@@ -1,3 +1,3 @@
-# Escrow Contract
+# Contracts
 
-It's in escrow.
+Various smart contracts.

@@ -14,10 +14,6 @@ library
 
   build-depends:      
     base >=4.13 && <4.14,
-    plutus-tx,
-    plutus-tx-plugin,
-    language-plutus-core,
-    plutus-contract,
   hs-source-dirs:
     src
   ghc-options: -fobject-code -fno-ignore-interface-pragmas -fno-omit-interface-pragmas
@@ -29,12 +25,6 @@ test-suite contracts-tests
   hs-source-dirs: test
   main-is: Spec.hs
   build-depends: 
-    base, 
-    doctest >= 0.8,
-    contracts,
-    plutus-tx,
-    plutus-tx-plugin,
-    language-plutus-core,
-    prettyprinter
+    base
   default-language:    Haskell2010
 
