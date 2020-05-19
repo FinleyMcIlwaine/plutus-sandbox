@@ -1,8 +1,8 @@
 cradle:
   multi:
     - path: './src'
-      config: { cradle: { cabal: { component: 'lib:example' } } }
+      config: { cradle: { cabal: { component: 'lib:contracts' } } }
     - path: './test'
-      config: { cradle: { cabal: { component: 'example-test' } } }
+      config: { cradle: { cabal: { component: 'contracts-test' } } }
     # - path: './app'
     #   config: { cradle: { cabal: { component: 'example-exe' } } }
