@@ -1,0 +1,19 @@
+{
+	"name": "Plutus development",
+	"image": "uwyoiohk/plutus-development:8.10.2",
+	"settings": {
+		"terminal.integrated.shell.linux": "/usr/bin/zsh",
+        "haskell.formattingProvider": "brittany"
+	},
+	"extensions": [
+		"maxgabriel.brittany",
+		"haskell.haskell"
+	],
+    // Mainly helps with maintaining cabal build cache
+    "workspaceMount": "source=${localWorkspaceFolder},target=${containerWorkspaceFolder},type=bind",
+    "mounts": [
+        // Use cabal cache volume
+        "source=${localWorkspaceFolder}/.cabal,target=/root/.cabal,type=bind"
+    ],
+    "postCreateCommand": ["cabal", "update"]
+}

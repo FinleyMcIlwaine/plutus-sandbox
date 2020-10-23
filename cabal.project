@@ -1,59 +1,42 @@
 packages:
     ./
 
-source-repository-package
-    type: git
-    location: https://github.com/input-output-hk/plutus
-    subdir: language-plutus-core
-    tag: 73234550dc2b2c6209975789845bb5ef6abdf6bc
+allow-newer: *
 
 source-repository-package
     type: git
     location: https://github.com/input-output-hk/plutus
-    subdir: plutus-emulator
-    tag: 73234550dc2b2c6209975789845bb5ef6abdf6bc
+    subdir: plutus-core
 
 source-repository-package
     type: git
     location: https://github.com/input-output-hk/plutus
-    subdir: plutus-ir
-    tag: 73234550dc2b2c6209975789845bb5ef6abdf6bc
-
-source-repository-package
-    type: git
-    location: https://github.com/input-output-hk/plutus
-    subdir: playground-common
-    tag: 73234550dc2b2c6209975789845bb5ef6abdf6bc
-
-source-repository-package
-    type: git
-    location: https://github.com/input-output-hk/plutus
-    subdir: iots-export
-    tag: 73234550dc2b2c6209975789845bb5ef6abdf6bc
+    subdir: prettyprinter-configurable
 
 source-repository-package
     type: git
     location: https://github.com/input-output-hk/plutus
     subdir: plutus-contract
-    tag: 73234550dc2b2c6209975789845bb5ef6abdf6bc
+
+source-repository-package
+    type: git
+    location: https://github.com/input-output-hk/plutus
+    subdir: iots-export
 
 source-repository-package
     type: git
     location: https://github.com/input-output-hk/plutus
     subdir: plutus-tx
-    tag: 73234550dc2b2c6209975789845bb5ef6abdf6bc
 
 source-repository-package
     type: git
     location: https://github.com/input-output-hk/plutus
     subdir: plutus-tx-plugin
-    tag: 73234550dc2b2c6209975789845bb5ef6abdf6bc
 
 source-repository-package
     type: git
     location: https://github.com/input-output-hk/plutus
     subdir: plutus-ledger
-    tag: 73234550dc2b2c6209975789845bb5ef6abdf6bc
 
 source-repository-package
     type: git

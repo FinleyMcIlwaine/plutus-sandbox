@@ -1,0 +1,64 @@
+cabal-version:  3.0
+name:           plutus-sandbox
+version:        0.1.0.0
+author:         Finley McIlwaine
+maintainer:     finleymcilwaine@gmail.com
+build-type:     Simple
+extra-source-files:
+    README.md
+
+source-repository head
+  type: git
+  location: https://github.com/FinleyMcIlwaine/plutus-sandbox
+
+common lang
+    default-language: Haskell2010
+    default-extensions: ExplicitForAll FlexibleContexts ScopedTypeVariables
+                        DeriveGeneric StandaloneDeriving DeriveLift
+                        GeneralizedNewtypeDeriving DeriveFunctor DeriveFoldable
+                        DeriveTraversable DerivingStrategies DerivingVia GADTs
+    other-extensions: DeriveAnyClass FlexibleInstances
+                      MultiParamTypeClasses TypeFamilies OverloadedStrings
+                      MonadComprehensions ConstrainedClassMethods TupleSections
+                      RankNTypes TemplateHaskell QuasiQuotes TypeApplications
+                      ExistentialQuantification
+    ghc-options: -Wall -Wnoncanonical-monad-instances
+                 -Wincomplete-uni-patterns -Wincomplete-record-updates
+                 -Wredundant-constraints -Widentities
+                 -Wnoncanonical-monoid-instances
+                 -- See Plutus TX README
+                 -fobject-code -fno-ignore-interface-pragmas -fno-omit-interface-pragmas
+
+library
+  exposed-modules:
+      Lib
+  other-modules:
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , plutus-core
+  default-language: Haskell2010
+
+executable plutus-sandbox-exe
+  main-is: Main.hs
+  other-modules:
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , plutus-sandbox
+  default-language: Haskell2010
+
+test-suite plutus-sandbox-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , plutus-sandbox
+  default-language: Haskell2010

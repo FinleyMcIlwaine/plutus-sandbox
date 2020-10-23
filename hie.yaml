@@ -1,0 +1,8 @@
+cradle:
+  cabal:
+    - path: "./src"
+      component: "lib:plutus-sandbox"
+    - path: "./app"
+      component: "exe:plutus-sandbox-exe"
+    - path: "./test"
+      component: "test:plutus-sandbox-test"
