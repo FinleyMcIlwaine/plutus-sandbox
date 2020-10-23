@@ -31,13 +31,18 @@ common lang
 
 library
   exposed-modules:
-      Lib
+      Contracts.UseCases.Vesting
   other-modules:
   hs-source-dirs:
       src
   build-depends:
       base >=4.7 && <5
-    , plutus-core
+    , plutus-core -any
+    , plutus-ledger -any
+    , plutus-contract -any
+    , iots-export -any
+    , plutus-tx -any
+    , template-haskell -any
   default-language: Haskell2010
 
 executable plutus-sandbox-exe

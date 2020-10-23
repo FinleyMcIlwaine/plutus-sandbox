@@ -3,11 +3,14 @@
 	"image": "uwyoiohk/plutus-development:8.10.2",
 	"settings": {
 		"terminal.integrated.shell.linux": "/usr/bin/zsh",
-        "haskell.formattingProvider": "brittany"
+        "[haskell]": {
+            "editor.tabSize": 2,
+            "editor.defaultFormatter": "sjurmillidahl.ormolu-vscode"
+        },
 	},
 	"extensions": [
-		"maxgabriel.brittany",
-		"haskell.haskell"
+		"haskell.haskell",
+		"sjurmillidahl.ormolu-vscode"
 	],
     // Mainly helps with maintaining cabal build cache
     "workspaceMount": "source=${localWorkspaceFolder},target=${containerWorkspaceFolder},type=bind",
