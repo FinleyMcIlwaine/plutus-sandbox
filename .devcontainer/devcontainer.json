@@ -1,6 +1,6 @@
 {
 	"name": "Plutus development",
-	"image": "uwyoiohk/plutus-development:8.10.2",
+	"image": "uwyoiohk/plutus-development:latest",
 	"settings": {
 		"terminal.integrated.shell.linux": "/usr/bin/zsh",
         "[haskell]": {
