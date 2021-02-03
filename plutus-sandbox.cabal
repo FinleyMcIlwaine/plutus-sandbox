@@ -11,50 +11,57 @@ source-repository head
   type: git
   location: https://github.com/FinleyMcIlwaine/plutus-sandbox
 
-common lang
-    default-language: Haskell2010
-    default-extensions: ExplicitForAll FlexibleContexts ScopedTypeVariables
-                        DeriveGeneric StandaloneDeriving DeriveLift
-                        GeneralizedNewtypeDeriving DeriveFunctor DeriveFoldable
-                        DeriveTraversable DerivingStrategies DerivingVia GADTs
-    other-extensions: DeriveAnyClass FlexibleInstances
-                      MultiParamTypeClasses TypeFamilies OverloadedStrings
-                      MonadComprehensions ConstrainedClassMethods TupleSections
-                      RankNTypes TemplateHaskell QuasiQuotes TypeApplications
-                      ExistentialQuantification
-    ghc-options: -Wall -Wnoncanonical-monad-instances
-                 -Wincomplete-uni-patterns -Wincomplete-record-updates
-                 -Wredundant-constraints -Widentities
-                 -Wnoncanonical-monoid-instances
-                 -- See Plutus TX README
-                 -fobject-code -fno-ignore-interface-pragmas -fno-omit-interface-pragmas
+flag defer-plugin-errors
+    description:
+        Defer errors from the plugin, useful for things like Haddock that can't handle it.
+    default: False
+    manual: True
 
 library
   exposed-modules:
       Contracts.UseCases.Vesting
+      PlutusCore.Examples
   other-modules:
   hs-source-dirs:
       src
   build-depends:
-      base >=4.7 && <5
+      base >=4.9 && <5
     , plutus-core -any
     , plutus-ledger -any
     , plutus-contract -any
     , iots-export -any
     , plutus-tx -any
+    , plutus-tx-plugin -any
     , template-haskell -any
+    , lens -any
+    , aeson -any
+    , containers -any
+    , prettyprinter -any
   default-language: Haskell2010
+  default-extensions: ExplicitForAll ScopedTypeVariables
+                      DeriveGeneric StandaloneDeriving DeriveLift
+                      GeneralizedNewtypeDeriving DeriveFunctor DeriveFoldable
+                      DeriveTraversable MultiParamTypeClasses
+  ghc-options: -Wall -Wnoncanonical-monad-instances
+                -Wincomplete-uni-patterns -Wincomplete-record-updates
+                -Wredundant-constraints -Widentities
+                -- See Plutus Tx readme
+                -fobject-code -fno-ignore-interface-pragmas -fno-omit-interface-pragmas
 
 executable plutus-sandbox-exe
   main-is: Main.hs
   other-modules:
   hs-source-dirs:
       app
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      base >=4.9 && <5
     , plutus-sandbox
   default-language: Haskell2010
+  ghc-options: -Wall -Wnoncanonical-monad-instances
+                 -Wincomplete-uni-patterns -Wincomplete-record-updates
+                 -Wredundant-constraints -Widentities -rtsopts
+                 -- See Plutus Tx readme
+                 -fobject-code -fno-ignore-interface-pragmas -fno-omit-interface-pragmas
 
 test-suite plutus-sandbox-test
   type: exitcode-stdio-1.0
@@ -64,6 +71,11 @@ test-suite plutus-sandbox-test
       test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
-      base >=4.7 && <5
+      base >=4.9 && <5
     , plutus-sandbox
   default-language: Haskell2010
+  ghc-options: -Wall -Wnoncanonical-monad-instances
+                 -Wincomplete-uni-patterns -Wincomplete-record-updates
+                 -Wredundant-constraints -Widentities -rtsopts
+                 -- See Plutus Tx readme
+                 -fobject-code -fno-ignore-interface-pragmas -fno-omit-interface-pragmas

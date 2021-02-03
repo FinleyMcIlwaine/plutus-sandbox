@@ -1,36 +1,45 @@
-{-# LANGUAGE DeriveAnyClass #-}
-{-# LANGUAGE NamedFieldPuns #-}
-{-# LANGUAGE TypeApplications #-}
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE ConstraintKinds    #-}
+{-# LANGUAGE DataKinds          #-}
+{-# LANGUAGE DeriveAnyClass     #-}
+{-# LANGUAGE DeriveGeneric      #-}
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE FlexibleContexts   #-}
+{-# LANGUAGE MonoLocalBinds     #-}
+{-# LANGUAGE NamedFieldPuns     #-}
+{-# LANGUAGE NoImplicitPrelude  #-}
+{-# LANGUAGE OverloadedStrings  #-}
+{-# LANGUAGE TemplateHaskell    #-}
+{-# LANGUAGE TypeApplications   #-}
+{-# LANGUAGE TypeFamilies       #-}
+{-# LANGUAGE TypeOperators      #-}
+{-# OPTIONS_GHC -fno-ignore-interface-pragmas #-}
+{-# OPTIONS_GHC -fno-specialise #-}
 
 module Contracts.UseCases.Vesting where
 
-import GHC.Generics (Generic)
-import Language.Plutus.Contract
-  ( BlockchainActions,
-    Endpoint,
-    type (.\/),
-  )
-import qualified Language.PlutusTx as PlutusTx
-import Language.PlutusTx.Prelude (AdditiveMonoid (zero))
-import Ledger (PubKeyHash, Slot)
-import qualified Ledger.Interval as Interval
-import qualified Ledger.Slot as Slot
-import Ledger.Typed.Scripts (ScriptType (..))
-import Ledger.Value (Value)
-import Language.PlutusTx.Monoid (Group(inv))
-import Ledger.Validation (ValidatorCtx(..), TxInfo(..))
-import qualified Ledger.Validation as Validation
-import qualified Ledger.Value as Value
-import Ledger (Validator)
-import qualified Ledger.Typed.Scripts as Scripts
+import           Control.Lens
+import           Control.Monad                     (void, when)
+import           Data.Aeson                        (FromJSON, ToJSON)
+import qualified Data.Map                          as Map
+import           Prelude                           (Semigroup (..))
+
+import           GHC.Generics                      (Generic)
+import           Language.Plutus.Contract          hiding (when)
+import qualified Language.Plutus.Contract.Typed.Tx as Typed
+import qualified Language.PlutusTx                 as PlutusTx
+import           Language.PlutusTx.Prelude         hiding (Semigroup (..), fold)
+import           Ledger                            (Address, PubKeyHash (..), Slot (..), Validator)
+import           Ledger.Constraints                (TxConstraints, mustBeSignedBy, mustPayToTheScript, mustValidateIn)
+import           Ledger.Contexts                   (TxInfo (..), ValidatorCtx (..))
+import qualified Ledger.Contexts                   as Validation
+import qualified Ledger.Interval                   as Interval
+import qualified Ledger.Slot                       as Slot
+import qualified Ledger.Tx                         as Tx
+import           Ledger.Typed.Scripts              (ScriptType (..))
+import qualified Ledger.Typed.Scripts              as Scripts
+import           Ledger.Value                      (Value)
+import qualified Ledger.Value                      as Value
+import qualified Prelude                           as Haskell
 
 -- | A vesting contract supports two operations: Vesting and retrieving. Money
 -- will be locked by the contract, and it will only be retrievable after some
@@ -57,7 +66,7 @@ instance ScriptType Vesting where
 data VestingTranche = VestingTranche
   { vestingTrancheDate :: Slot,
     vestingTrancheAmount :: Value
-  }
+  } deriving (Generic)
 
 -- Make the VestingTranche data type available on the blockchain.
 PlutusTx.makeLift ''VestingTranche
@@ -69,14 +78,14 @@ data VestingParams = VestingParams
     vestingOwner :: PubKeyHash
   }
   -- deriving (Generic, PlutusTx.Lift DefaultUni)
-  deriving Generic
+  deriving (Generic)
 
-PlutusTx.makeLift ''VestingParams  
+PlutusTx.makeLift ''VestingParams
 
 {-# INLINEABLE totalAmount #-}
 -- | Retrieve the total amount vested based on the parameters
 totalAmount :: VestingParams -> Value
-totalAmount VestingParams {..} = vestingTrancheAmount vestingTranche1 <> vestingTrancheAmount vestingTranche2
+totalAmount VestingParams {vestingTranche1,vestingTranche2} = vestingTrancheAmount vestingTranche1 + vestingTrancheAmount vestingTranche2
 
 {-# INLINEABLE availableFrom #-}
 -- | The amount guaranteed to be available from a given tranche in a given slot
@@ -85,54 +94,71 @@ availableFrom :: VestingTranche -> Slot.SlotRange -> Value
 availableFrom (VestingTranche d v) range =
   -- The valid range is any slot after the one specified for the tranche
   let validRange = Interval.from d
-  -- If the valid range contains the argument range (start slot of argument
-  -- range is after the tranche start), then the whole amount in the tranche
-  -- is available, otherwise nothing.
-   in if validRange `Interval.contains` range then v else zero
+   in -- If the valid range contains the argument range (start slot of argument
+      -- range is after the tranche start), then the whole amount in the tranche
+      -- is available, otherwise nothing.
+      if validRange `Interval.contains` range then v else zero
 
 -- | The amount available at a slot.
 availableAt :: VestingParams -> Slot -> Value
-availableAt VestingParams {..} sl =
-  let f VestingTranche {..} = if sl >= vestingTrancheDate then vestingTrancheAmount else mempty
+availableAt VestingParams {vestingTranche1, vestingTranche2} sl =
+  let f VestingTranche {vestingTrancheDate, vestingTrancheAmount} = if sl >= vestingTrancheDate then vestingTrancheAmount else mempty
    in foldMap f [vestingTranche1, vestingTranche2]
 
-{-# INLINABLE remainingFrom #-}
+{-# INLINEABLE remainingFrom #-}
 -- | The amount that has not been released from this tranche yet
 remainingFrom :: VestingTranche -> Slot.SlotRange -> Value
-remainingFrom t@VestingTranche{..} range = vestingTrancheAmount <> (inv $ availableFrom t range)
+remainingFrom t@VestingTranche {vestingTrancheAmount} range = vestingTrancheAmount - availableFrom t range
 
-{-# INLINABLE validate #-}
+{-# INLINEABLE validate #-}
 validate :: VestingParams -> () -> () -> ValidatorCtx -> Bool
-validate VestingParams{..} () () ctx@ValidatorCtx{ valCtxTxInfo=txInfo@TxInfo{ txInfoValidRange } } =
+validate VestingParams {vestingTranche1, vestingTranche2, vestingOwner} () () ctx@ValidatorCtx{valCtxTxInfo=txInfo@TxInfo{txInfoValidRange}} =
   let
-    -- The amount that's actually locked by the validator script right now
     remainingActual = Validation.valueLockedBy txInfo (Validation.ownHash ctx)
-    -- The sum of amounts remaining in each tranche
-    remainingExpected = remainingFrom vestingTranche1 txInfoValidRange <> remainingFrom vestingTranche2 txInfoValidRange
-  in remainingActual `Value.geq` remainingExpected
-    -- The following condition makes transactions valid as long as they are
-    -- _signed by_ the vesting scheme owner. This means they can instruct
-    -- the contract to pay out to other parties and can potentially save
-    -- some transactions.
-    && Validation.txSignedBy txInfo vestingOwner
+    remainingExpected = remainingFrom vestingTranche1 txInfoValidRange + remainingFrom vestingTranche2 txInfoValidRange
+  in remainingActual `Value.geq` remainingExpected && (Validation.txSignedBy txInfo vestingOwner)
 
+-- | A note on what's going here:
+-- PlutusTx.compile is the following type:
+--         Q (TExp a) -> Q (TExp (CompiledCode PLC.DefaultUni a))
+
+-- So it takes a quoted, typed, Haskell expression, and produces a corresponding
+-- quoted, typed, Plutus Core expression.
+
+-- We then apply the generated PLC validate function to the vesting parameters
+-- (which have also been converted into their PLC equivalent)
+
+-- So, the value:
+--    ($$(PlutusTx.compile [||validate||]) `PlutusTx.applyCode` PlutusTx.liftCode vesting)
+-- has type:
+--    CompiledCode DefaultUni (() -> () -> ValidatorCtx -> Bool)
+
+-- Note that the type () -> () -> ValidatorCtx -> Bool is the type of a validator that has
+-- unit type datum and redeemer.
+
+-- Then we take that generated validator, and pass it to the Ledger.Typed.Scripts.validator
+-- function, along with a function to wrap that validator, to ultimately get the script
+-- instance.
+
+
+
+scriptInstance :: VestingParams -> Scripts.ScriptInstance Vesting
+scriptInstance vesting =
+  Scripts.validator @Vesting
+    ($$(PlutusTx.compile [||validate||]) `PlutusTx.applyCode` PlutusTx.liftCode vesting)
+    $$(PlutusTx.compile [||wrap||])
+  where
+    wrap = Scripts.wrapValidator @() @()
+
+-- | The Validator script from the vesting validator instance
 vestingScript :: VestingParams -> Validator
 vestingScript = Scripts.validatorScript . scriptInstance
 
+-- | The script address of the validator instance
+contractAddress :: VestingParams -> Ledger.Address
+contractAddress = Scripts.scriptAddress . scriptInstance
 
--- | 
-scriptInstance :: VestingParams -> Scripts.ScriptInstance Vesting
-scriptInstance vesting = Scripts.validator @Vesting
-  ($$(PlutusTx.compile [|| validate ||]) `PlutusTx.applyCode` PlutusTx.liftCode vesting)
-  $$(PlutusTx.compile [|| wrap ||])
-  where wrap = Scripts.wrapValidator @() @()
-
-{-
--- | A note on what's going here:
-PlutusTx.compile is the following type:
-        Q (TExp a) -> Q (TExp (CompiledCode PLC.DefaultUni a))
-
-So it takes a quoted, typed, Haskell expression, and produces a corresponding
-quoted, typed, Plutus Core expression.
-
--}
+data VestingError =
+  VContractError ContractError
+  | InsufficientFundsError Value Value Value
+  deriving (Haskell.Eq, Show)

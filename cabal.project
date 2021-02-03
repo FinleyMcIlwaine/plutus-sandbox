@@ -6,40 +6,8 @@ allow-newer: *
 source-repository-package
     type: git
     location: https://github.com/input-output-hk/plutus
-    subdir: plutus-core
-
-source-repository-package
-    type: git
-    location: https://github.com/input-output-hk/plutus
-    subdir: prettyprinter-configurable
-
-source-repository-package
-    type: git
-    location: https://github.com/input-output-hk/plutus
-    subdir: plutus-contract
-
-source-repository-package
-    type: git
-    location: https://github.com/input-output-hk/plutus
-    subdir: iots-export
-
-source-repository-package
-    type: git
-    location: https://github.com/input-output-hk/plutus
-    subdir: plutus-tx
-
-source-repository-package
-    type: git
-    location: https://github.com/input-output-hk/plutus
-    subdir: plutus-tx-plugin
-
-source-repository-package
-    type: git
-    location: https://github.com/input-output-hk/plutus
-    subdir: plutus-ledger
+    subdir: plutus-core prettyprinter-configurable plutus-contract iots-export plutus-tx plutus-tx-plugin plutus-ledger plutus-ledger-api
 
 source-repository-package
     type: git
     location: https://github.com/input-output-hk/cardano-crypto
-
-documentation: True
